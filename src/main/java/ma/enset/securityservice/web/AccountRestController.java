@@ -10,6 +10,7 @@ import ma.enset.securityservice.dto.RoleUserForm;
 import ma.enset.securityservice.entities.Role;
 import ma.enset.securityservice.entities.User;
 import ma.enset.securityservice.service.AccountService;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,21 +31,25 @@ public class AccountRestController {
     }
 
     @GetMapping("/users")
+    @PostAuthorize("hasAnyAuthority('USER','ADMIN')")
     public List<User> users() {
         return accountService.listUsers();
     }
 
     @PostMapping("/users")
+    @PostAuthorize("hasAuthority('ADMIN')")
     public User saveUser(@RequestBody User user) {
         return accountService.addUser(user);
     }
 
     @PostMapping("/roles")
+    @PostAuthorize("hasAuthority('ADMIN')")
     public Role saveRole(@RequestBody Role role) {
         return accountService.addRole(role);
     }
 
     @PostMapping("/addRoleToUser")
+    @PostAuthorize("hasAuthority('ADMIN')")
     public void addRoleToUser(@RequestBody RoleUserForm roleUserForm) {
         accountService.addRoleToUser(roleUserForm.getUserName(), roleUserForm.getRoleName());
     }
